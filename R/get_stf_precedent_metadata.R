@@ -7,16 +7,16 @@ stf_url <- function(x, y, w) {
 
 
   ## Build url based on search, start and end parameters
-  url1 <- "http://www.stf.jus.br/portal/jurisprudencia/listarConsolidada.asp?base=baseAcordaos"
+  url1 <- "https://jurisprudencia.stf.jus.br/pages/search?base=acordaos&sinonimo=true&plural=true&page=1&pageSize=10"
 
-  url1 <- httr::modify_url(url1, query = list(txtPesquisaLivre = x, dataFinal = w, dataInicial = y))
+  url1 <- httr::modify_url(url1, query = list(queryString = x, dataFinal = w, dataInicial = y))
 
   ## Encodes the URL replacing specially spaces by "%" plus the hexadecimal representation
 
   ## Gets the number of precedents
   numero_tinyurl <- httr::GET(url1) %>%
     httr::content() %>%
-    xml2::xml_find_all("//*[@class='linkPagina']|//*[@class='linkPagina']/@href") %>%
+    xml2::xml_find_all("//*[@class='mat-tooltip-trigger ng-star-inserted']|//*[@class='mat-tooltip-trigger ng-star-inserted']/@href") %>%
     xml2::xml_text()
 
   ##
@@ -25,7 +25,7 @@ stf_url <- function(x, y, w) {
     magrittr::divide_by(10) %>%
     ceiling()
   tinyURL <- numero_tinyurl[[2]]
-  urls <- stringr::str_c("http://www.stf.jus.br/portal/jurisprudencia/", tinyURL, "&pagina=", 1:paginas)
+  urls <- stringr::str_c("https://jurisprudencia.stf.jus.br", tinyURL, "&pagina=", 1:paginas)
 }
 # End of the function
 
